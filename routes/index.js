@@ -60,7 +60,7 @@ module.exports = function(io){
 		// update list of users in chat, client-side
 		io.sockets.emit('updateusers', usernames);
 		// echo globally that this client has left
-		socket.broadcast.emit('updatechat', 'SERVER has disconnected');
+		//socket.broadcast.emit('updatechat', 'SERVER has disconnected');
 	});
 });
 
