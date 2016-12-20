@@ -9,16 +9,12 @@ module.exports = function(io){
     res.render('index', { title: 'Express' });
   });
 
-  var SaveChat = function(data) {
-
-  }
-
   var usernames = {};
 
   io.sockets.on('connection', function (socket) {
 
   chat.find({},{message:1},function(err,chats){
-    console.log(JSON.stringify(chats));
+    console.log(usernames,socket.username);
     _.each(chats,function(chat){
         io.sockets.emit('updatechat',chat.message);
     })
@@ -60,7 +56,7 @@ module.exports = function(io){
 		// update list of users in chat, client-side
 		io.sockets.emit('updateusers', usernames);
 		// echo globally that this client has left
-		//socket.broadcast.emit('updatechat', 'SERVER has disconnected');
+		socket.broadcast.emit('updatechat', 'SERVER has disconnected');
 	});
 });
 
