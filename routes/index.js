@@ -1,20 +1,42 @@
 module.exports = function(io){
   var express = require('express');
   var router = express.Router();
+  var _ = require('underscore');
+  var chat = require('../db/models/chat.js');
 
   /* GET home page. */
   router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });
   });
 
+  var SaveChat = function(data) {
+
+  }
+
   var usernames = {};
 
   io.sockets.on('connection', function (socket) {
 
+  chat.find({},{message:1},function(err,chats){
+    console.log(JSON.stringify(chats));
+    _.each(chats,function(chat){
+        io.sockets.emit('updatechat',chat.message);
+    })
+  })
+
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
-		io.sockets.emit('updatechat',data);
+    var chatObj = new chat({
+      "message":data
+    })
+    chatObj.save(function(err){
+      if(err) {
+        console.log("chat save error",err);
+      } else {
+        io.sockets.emit('updatechat',data);
+      }
+    })
 	});
 
 	// when the client emits 'adduser', this listens and executes
